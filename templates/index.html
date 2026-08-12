@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Database Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<header>
+    <div class="container">
+        <h1>🎓 College Database Management</h1>
+        <p>College Information Management System</p>
+    </div>
+</header>
+
+<nav>
+    <div class="container nav-container">
+        <a href="#dashboard">Dashboard</a>
+        <a href="#students">Students</a>
+        <a href="#faculty">Faculty</a>
+        <a href="#departments">Departments</a>
+        <a href="#courses">Courses</a>
+        <a href="#enrollments">Enrollments</a>
+        <a href="#attendance">Attendance</a>
+    </div>
+</nav>
+
+<main class="container">
+
+<section id="dashboard" class="hero">
+    <h2>College Management Dashboard</h2>
+    <p>Centralized management of students, faculty, courses and academic records.</p>
+</section>
+
+<section class="dashboard">
+
+    <div class="card">
+        <span class="icon">👨‍🎓</span>
+        <h2 id="studentCount">{{ statistics.students }}</h2>
+        <p>Students</p>
+    </div>
+
+    <div class="card">
+        <span class="icon">👨‍🏫</span>
+        <h2 id="facultyCount">{{ statistics.faculty }}</h2>
+        <p>Faculty</p>
+    </div>
+
+    <div class="card">
+        <span class="icon">🏢</span>
+        <h2 id="departmentCount">{{ statistics.departments }}</h2>
+        <p>Departments</p>
+    </div>
+
+    <div class="card">
+        <span class="icon">📚</span>
+        <h2 id="courseCount">{{ statistics.courses }}</h2>
+        <p>Courses</p>
+    </div>
+
+    <div class="card">
+        <span class="icon">📝</span>
+        <h2 id="enrollmentCount">{{ statistics.enrollments }}</h2>
+        <p>Enrollments</p>
+    </div>
+
+</section>
+
+
+<section id="students" class="panel">
+
+    <div class="section-header">
+        <div>
+            <h2>👨‍🎓 Student Management</h2>
+            <p>Register and manage students.</p>
+        </div>
+
+        <button onclick="openModal('studentModal')">
+            + Add Student
+        </button>
+    </div>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Roll Number</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Department</th>
+                    <th>Year</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody id="studentsTable">
+                <tr>
+                    <td colspan="7">Loading...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</section>
+
+
+<section id="faculty" class="panel">
+
+    <div class="section-header">
+        <div>
+            <h2>👨‍🏫 Faculty</h2>
+            <p>Faculty members and departments.</p>
+        </div>
+
+        <button onclick="openModal('facultyModal')">
+            + Add Faculty
+        </button>
+    </div>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Department</th>
+                </tr>
+            </thead>
+
+            <tbody id="facultyTable">
+                <tr>
+                    <td colspan="4">Loading...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</section>
+
+
+<section id="departments" class="panel">
+
+    <div class="section-header">
+        <div>
+            <h2>🏢 Departments</h2>
+            <p>College academic departments.</p>
+        </div>
+    </div>
+
+    <div id="departmentCards" class="module-grid">
+        <p>Loading...</p>
+    </div>
+
+</section>
+
+
+<section id="courses" class="panel">
+
+    <div class="section-header">
+        <div>
+            <h2>📚 Courses</h2>
+            <p>Available courses and credits.</p>
+        </div>
+
+        <button onclick="openModal('courseModal')">
+            + Add Course
+        </button>
+    </div>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Code</th>
+                    <th>Course</th>
+                    <th>Credits</th>
+                    <th>Department</th>
+                </tr>
+            </thead>
+
+            <tbody id="coursesTable">
+                <tr>
+                    <td colspan="5">Loading...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</section>
+
+
+<section id="enrollments" class="panel">
+
+    <div class="section-header">
+        <div>
+            <h2>📝 Enrollments</h2>
+            <p>Student course enrollment records.</p>
+        </div>
+
+        <button onclick="openModal('enrollmentModal')">
+            + Add Enrollment
+        </button>
+    </div>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Student</th>
+                    <th>Roll Number</th>
+                    <th>Course</th>
+                    <th>Semester</th>
+                    <th>Grade</th>
+                </tr>
+            </thead>
+
+            <tbody id="enrollmentsTable">
+                <tr>
+                    <td colspan="6">Loading...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</section>
+
+
+<section id="attendance" class="panel">
+
+    <div class="section-header">
+        <div>
+            <h2>📅 Attendance</h2>
+            <p>Student attendance records.</p>
+        </div>
+    </div>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Course</th>
+                    <th>Attended</th>
+                    <th>Held</th>
+                    <th>Percentage</th>
+                </tr>
+            </thead>
+
+            <tbody id="attendanceTable">
+                <tr>
+                    <td colspan="5">Loading...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</section>
+
+</main>
+
+
+<!-- Student Modal -->
+
+<div id="studentModal" class="modal">
+    <div class="modal-content">
+
+        <div class="modal-header">
+            <h2>Add Student</h2>
+            <button class="close" onclick="closeModal('studentModal')">×</button>
+        </div>
+
+        <form id="studentForm">
+
+            <label>Roll Number</label>
+            <input id="studentRoll" required placeholder="CSE001">
+
+            <label>Name</label>
+            <input id="studentName" required placeholder="Student Name">
+
+            <label>Email</label>
+            <input id="studentEmail" type="email" required>
+
+            <label>Phone</label>
+            <input id="studentPhone">
+
+            <label>Department</label>
+            <select id="studentDepartment" required></select>
+
+            <label>Year</label>
+            <select id="studentYear" required>
+                <option value="">Select Year</option>
+                <option value="1">First Year</option>
+                <option value="2">Second Year</option>
+                <option value="3">Third Year</option>
+                <option value="4">Fourth Year</option>
+            </select>
+
+            <button type="submit">Save Student</button>
+
+        </form>
+    </div>
+</div>
+
+
+<!-- Faculty Modal -->
+
+<div id="facultyModal" class="modal">
+    <div class="modal-content">
+
+        <div class="modal-header">
+            <h2>Add Faculty</h2>
+            <button class="close" onclick="closeModal('facultyModal')">×</button>
+        </div>
+
+        <form id="facultyForm">
+
+            <label>Name</label>
+            <input id="facultyName" required>
+
+            <label>Email</label>
+            <input id="facultyEmail" type="email" required>
+
+            <label>Department</label>
+            <select id="facultyDepartment" required></select>
+
+            <button type="submit">Save Faculty</button>
+
+        </form>
+    </div>
+</div>
+
+
+<!-- Course Modal -->
+
+<div id="courseModal" class="modal">
+    <div class="modal-content">
+
+        <div class="modal-header">
+            <h2>Add Course</h2>
+            <button class="close" onclick="closeModal('courseModal')">×</button>
+        </div>
+
+        <form id="courseForm">
+
+            <label>Course Name</label>
+            <input id="courseName" required>
+
+            <label>Course Code</label>
+            <input id="courseCode" required placeholder="CS301">
+
+            <label>Credits</label>
+            <input id="courseCredits" type="number" min="1" max="10" required>
+
+            <label>Department</label>
+            <select id="courseDepartment" required></select>
+
+            <button type="submit">Save Course</button>
+
+        </form>
+    </div>
+</div>
+
+
+<!-- Enrollment Modal -->
+
+<div id="enrollmentModal" class="modal">
+    <div class="modal-content">
+
+        <div class="modal-header">
+            <h2>Add Enrollment</h2>
+            <button class="close" onclick="closeModal('enrollmentModal')">×</button>
+        </div>
+
+        <form id="enrollmentForm">
+
+            <label>Student</label>
+            <select id="enrollmentStudent" required></select>
+
+            <label>Course</label>
+            <select id="enrollmentCourse" required></select>
+
+            <label>Semester</label>
+            <input id="enrollmentSemester" required placeholder="Semester 4">
+
+            <label>Grade</label>
+            <select id="enrollmentGrade">
+                <option value="">Not Graded</option>
+                <option value="A+">A+</option>
+                <option value="A">A</option>
+                <option value="B+">B+</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+                <option value="F">F</option>
+            </select>
+
+            <button type="submit">Save Enrollment</button>
+
+        </form>
+    </div>
+</div>
+
+
+<footer>
+    <p>College Database Management System • S4-P1</p>
+    <p>Flask • PostgreSQL • SQLAlchemy • JavaScript</p>
+</footer>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+
+</body>
+</html>
