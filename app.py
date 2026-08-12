@@ -21,6 +21,18 @@ if database_url.startswith("postgres://"):
 app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
+
+@app.errorhandler(Exception)
+def handle_exception(error):
+    db.session.rollback()
+
+    return jsonify({
+        "status": "error",
+        "error_type": type(error).__name__,
+        "error": str(error)
+    }), 500
+
+
 db = SQLAlchemy(app)
 
 
