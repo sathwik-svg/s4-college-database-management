@@ -408,6 +408,51 @@
 </div>
 
 
+<!-- Attendance Modal -->
+
+<div id="attendanceModal" class="modal">
+    <div class="modal-content">
+
+        <div class="modal-header">
+            <h2>Add Attendance</h2>
+            <button class="close" onclick="closeModal('attendanceModal')">×</button>
+        </div>
+
+        <form id="attendanceForm">
+
+            <label>Student</label>
+            <select id="attendanceStudent" required></select>
+
+            <label>Course</label>
+            <select id="attendanceCourse" required></select>
+
+            <label>Classes Attended</label>
+            <input
+                id="classesAttended"
+                type="number"
+                min="0"
+                required
+            >
+
+            <label>Classes Held</label>
+            <input
+                id="classesHeld"
+                type="number"
+                min="0"
+                required
+            >
+
+            <button type="submit">
+                Save Attendance
+            </button>
+
+        </form>
+
+    </div>
+</div>
+
+
+
 <footer>
     <p>College Database Management System • S4-P1</p>
     <p>Flask • PostgreSQL • SQLAlchemy • JavaScript</p>

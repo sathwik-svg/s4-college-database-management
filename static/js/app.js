@@ -338,3 +338,185 @@ window.onclick = event => {
         event.target.classList.remove("active");
     }
 };
+
+document.getElementById("facultyForm").addEventListener(
+    "submit",
+    async event => {
+        event.preventDefault();
+
+        try {
+            await api("/api/faculty", {
+                method: "POST",
+                body: JSON.stringify({
+                    name: document.getElementById("facultyName").value,
+                    email: document.getElementById("facultyEmail").value,
+                    department_id: Number(
+                        document.getElementById("facultyDepartment").value
+                    )
+                })
+            });
+
+            event.target.reset();
+            closeModal("facultyModal");
+            await loadFaculty();
+
+            alert("Faculty created successfully.");
+
+        } catch (error) {
+            alert(error.message);
+        }
+    }
+);
+
+
+document.getElementById("courseForm").addEventListener(
+    "submit",
+    async event => {
+        event.preventDefault();
+
+        try {
+            await api("/api/courses", {
+                method: "POST",
+                body: JSON.stringify({
+                    name: document.getElementById("courseName").value,
+                    code: document.getElementById("courseCode").value,
+                    credits: Number(
+                        document.getElementById("courseCredits").value
+                    ),
+                    department_id: Number(
+                        document.getElementById("courseDepartment").value
+                    )
+                })
+            });
+
+            event.target.reset();
+            closeModal("courseModal");
+            await loadCourses();
+
+            alert("Course created successfully.");
+
+        } catch (error) {
+            alert(error.message);
+        }
+    }
+);
+
+
+document.getElementById("enrollmentForm").addEventListener(
+    "submit",
+    async event => {
+        event.preventDefault();
+
+        try {
+            await api("/api/enrollments", {
+                method: "POST",
+                body: JSON.stringify({
+                    student_id: Number(
+                        document.getElementById("enrollmentStudent").value
+                    ),
+                    course_id: Number(
+                        document.getElementById("enrollmentCourse").value
+                    ),
+                    semester:
+                        document.getElementById("enrollmentSemester").value,
+                    grade:
+                        document.getElementById("enrollmentGrade").value
+                })
+            });
+
+            event.target.reset();
+            closeModal("enrollmentModal");
+            await loadEnrollments();
+
+            alert("Enrollment created successfully.");
+
+        } catch (error) {
+            alert(error.message);
+        }
+    }
+);
+
+
+document.getElementById("attendanceForm").addEventListener(
+    "submit",
+    async event => {
+        event.preventDefault();
+
+        try {
+            await api("/api/attendance", {
+                method: "POST",
+                body: JSON.stringify({
+                    student_id: Number(
+                        document.getElementById("attendanceStudent").value
+                    ),
+                    course_id: Number(
+                        document.getElementById("attendanceCourse").value
+                    ),
+                    classes_attended: Number(
+                        document.getElementById("classesAttended").value
+                    ),
+                    classes_held: Number(
+                        document.getElementById("classesHeld").value
+                    )
+                })
+            });
+
+            event.target.reset();
+            closeModal("attendanceModal");
+            await loadAttendance();
+
+            alert("Attendance saved successfully.");
+
+        } catch (error) {
+            alert(error.message);
+        }
+    }
+);
+
+
+async function populateAttendanceSelectors() {
+    const studentSelect =
+        document.getElementById("attendanceStudent");
+
+    const courseSelect =
+        document.getElementById("attendanceCourse");
+
+    studentSelect.innerHTML =
+        '<option value="">Select Student</option>';
+
+    courseSelect.innerHTML =
+        '<option value="">Select Course</option>';
+
+    students.forEach(student => {
+        studentSelect.innerHTML += `
+            <option value="${student.id}">
+                ${student.roll_number} - ${student.name}
+            </option>
+        `;
+    });
+
+    courses.forEach(course => {
+        courseSelect.innerHTML += `
+            <option value="${course.id}">
+                ${course.code} - ${course.name}
+            </option>
+        `;
+    });
+}
+
+
+const originalInit = init;
+
+init = async function() {
+    try {
+        await loadDepartments();
+        await loadStudents();
+        await loadFaculty();
+        await loadCourses();
+        await loadEnrollments();
+        await loadAttendance();
+        await populateAttendanceSelectors();
+    } catch (error) {
+        console.error(error);
+    }
+};

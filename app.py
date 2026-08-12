@@ -301,6 +301,213 @@ def get_faculty():
     ])
 
 
+
+@app.route("/api/faculty", methods=["POST"])
+def create_faculty():
+    data = request.get_json() or {}
+
+    required = ["name", "email", "department_id"]
+
+    if not all(field in data for field in required):
+        return jsonify({"error": "Missing required fields"}), 400
+
+    if Faculty.query.filter_by(email=data["email"]).first():
+        return jsonify({"error": "Faculty email already exists"}), 409
+
+    department = db.session.get(
+        Department,
+        data["department_id"]
+    )
+
+    if not department:
+        return jsonify({"error": "Department not found"}), 404
+
+    member = Faculty(
+        name=data["name"],
+        email=data["email"],
+        department_id=data["department_id"]
+    )
+
+    db.session.add(member)
+    db.session.commit()
+
+    return jsonify({
+        "message": "Faculty created successfully",
+        "id": member.id
+    }), 201
+
+
+@app.route("/api/courses", methods=["POST"])
+def create_course():
+    data = request.get_json() or {}
+
+    required = [
+        "name",
+        "code",
+        "credits",
+        "department_id"
+    ]
+
+    if not all(field in data for field in required):
+        return jsonify({"error": "Missing required fields"}), 400
+
+    if Course.query.filter_by(code=data["code"]).first():
+        return jsonify({"error": "Course code already exists"}), 409
+
+    department = db.session.get(
+        Department,
+        data["department_id"]
+    )
+
+    if not department:
+        return jsonify({"error": "Department not found"}), 404
+
+    credits = int(data["credits"])
+
+    if credits < 1 or credits > 10:
+        return jsonify({"error": "Credits must be between 1 and 10"}), 400
+
+    course = Course(
+        name=data["name"],
+        code=data["code"],
+        credits=credits,
+        department_id=data["department_id"]
+    )
+
+    db.session.add(course)
+    db.session.commit()
+
+    return jsonify({
+        "message": "Course created successfully",
+        "id": course.id
+    }), 201
+
+
+@app.route("/api/enrollments", methods=["POST"])
+def create_enrollment():
+    data = request.get_json() or {}
+
+    required = [
+        "student_id",
+        "course_id",
+        "semester"
+    ]
+
+    if not all(field in data for field in required):
+        return jsonify({"error": "Missing required fields"}), 400
+
+    student = db.session.get(
+        Student,
+        data["student_id"]
+    )
+
+    course = db.session.get(
+        Course,
+        data["course_id"]
+    )
+
+    if not student:
+        return jsonify({"error": "Student not found"}), 404
+
+    if not course:
+        return jsonify({"error": "Course not found"}), 404
+
+    existing = Enrollment.query.filter_by(
+        student_id=data["student_id"],
+        course_id=data["course_id"],
+        semester=data["semester"]
+    ).first()
+
+    if existing:
+        return jsonify({
+            "error": "Student is already enrolled in this course for this semester"
+        }), 409
+
+    enrollment = Enrollment(
+        student_id=data["student_id"],
+        course_id=data["course_id"],
+        semester=data["semester"],
+        grade=data.get("grade")
+    )
+
+    db.session.add(enrollment)
+    db.session.commit()
+
+    return jsonify({
+        "message": "Enrollment created successfully",
+        "id": enrollment.id
+    }), 201
+
+
+@app.route("/api/attendance", methods=["POST"])
+def create_attendance():
+    data = request.get_json() or {}
+
+    required = [
+        "student_id",
+        "course_id",
+        "classes_attended",
+        "classes_held"
+    ]
+
+    if not all(field in data for field in required):
+        return jsonify({"error": "Missing required fields"}), 400
+
+    student = db.session.get(
+        Student,
+        data["student_id"]
+    )
+
+    course = db.session.get(
+        Course,
+        data["course_id"]
+    )
+
+    if not student:
+        return jsonify({"error": "Student not found"}), 404
+
+    if not course:
+        return jsonify({"error": "Course not found"}), 404
+
+    attended = int(data["classes_attended"])
+    held = int(data["classes_held"])
+
+    if attended < 0 or held < 0:
+        return jsonify({
+            "error": "Attendance values cannot be negative"
+        }), 400
+
+    if attended > held:
+        return jsonify({
+            "error": "Classes attended cannot exceed classes held"
+        }), 400
+
+    record = Attendance.query.filter_by(
+        student_id=data["student_id"],
+        course_id=data["course_id"]
+    ).first()
+
+    if record:
+        record.classes_attended = attended
+        record.classes_held = held
+    else:
+        record = Attendance(
+            student_id=data["student_id"],
+            course_id=data["course_id"],
+            classes_attended=attended,
+            classes_held=held
+        )
+        db.session.add(record)
+
+    db.session.commit()
+
+    return jsonify({
+        "message": "Attendance saved successfully",
+        "id": record.id,
+        "percentage": record.percentage
+    }), 201
+
+
 @app.route("/api/courses", methods=["GET"])
 def get_courses():
     courses = Course.query.order_by(
