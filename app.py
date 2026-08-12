@@ -147,18 +147,26 @@ class Attendance(db.Model):
 
 @app.route("/")
 def index():
-    statistics = {
-        "students": Student.query.count(),
-        "faculty": Faculty.query.count(),
-        "departments": Department.query.count(),
-        "courses": Course.query.count(),
-        "enrollments": Enrollment.query.count(),
-    }
+    try:
+        statistics = {
+            "students": Student.query.count(),
+            "faculty": Faculty.query.count(),
+            "departments": Department.query.count(),
+            "courses": Course.query.count(),
+            "enrollments": Enrollment.query.count(),
+        }
 
-    return render_template(
-        "index.html",
-        statistics=statistics
-    )
+        return render_template(
+            "index.html",
+            statistics=statistics
+        )
+
+    except Exception as error:
+        return jsonify({
+            "status": "error",
+            "service": "college-database-management",
+            "error": str(error)
+        }), 500
 
 
 @app.route("/api/students", methods=["GET"])
